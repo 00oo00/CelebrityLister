@@ -1,0 +1,55 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 2017-maj-05, 15:17:15
+    Author     : _o0
+*/
+
+*{
+dark-primary-color     : #D32F2F; 
+default-primary-color  : #4CAF50; 
+light-primary-color    : #FFC107; 
+text-primary-color     : #FFFFFF; 
+accent-color           : #FFC107; 
+primary-text-color     : #212121; 
+secondary-text-color   : #757575; 
+divider-color          : #BDBDBD;
+}
+
+.root {
+    -fx-background-color: dark-primary-color ;
+}
+
+.table-view {
+    -fx-background-color:transparent;
+}
+
+
+.button {
+   -fx-shadow-highlight-color : transparent; // if you don't want a 3d effect highlight.
+   -fx-outer-border : transparent;  // if you don't want a button border.
+   -fx-inner-border : transparent;  // if you don't want a button border.
+   -fx-focus-color: transparent;  // if you don't want any focus ring.
+   -fx-faint-focus-color : transparent;  // if you don't want any focus ring.
+   -fx-base : palegreen;  // if you want a gradient shaded button that lightens on hover and darkens on arming.
+  // -fx-body-color: palegreen; // instead of -fx-base, if you want a flat shaded button that does not lighten on hover and darken on arming.
+   -fx-font-size: 16px "Arial";
+   -fx-text-fill: text-primary-color;
+   -fx-background-color: default-primary-color;
+   -fx-background-radius: 0;
+}
+
+.text-field {
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-outer-border : transparent;  // if you don't want a button border.
+   -fx-inner-border : transparent;
+   -fx-background-color: white;
+}
+
+
+
+
