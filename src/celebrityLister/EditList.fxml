@@ -15,17 +15,16 @@
    <children>
       <VBox layoutX="14.0" layoutY="14.0" prefHeight="461.0" prefWidth="439.0" spacing="10.0">
          <children>
-            <Label text="Pressmeddelanden">
+            <Label text="Celebrities">
                <font>
                   <Font size="24.0" />
                </font>
             </Label>
-            <TableView fx:id="tableView" onMouseClicked="#userClickedOnTable" prefHeight="220.0" prefWidth="439.0" stylesheets="@redTheme.css">
+            <TableView fx:id="tableView" prefHeight="220.0" prefWidth="439.0" stylesheets="@redTheme.css" VBox.vgrow="ALWAYS">
               <columns>
-                <TableColumn fx:id="firstNameColumn" onEditCommit="#changeFirstNameCellEvent" prefWidth="124.5" text="Pressmeddelande" />
-                <TableColumn fx:id="lastNameColumn" onEditCommit="#changeLastNameCellEvent" prefWidth="124.5" text="Publicerad Ja/Nej" />
-                  <TableColumn fx:id="birthdayColumn" prefWidth="106.5" text="Skickad datum" />
-                  <TableColumn prefWidth="75.0" text="PM ID" />
+                <TableColumn fx:id="firstNameColumn" onEditCommit="#changeFirstNameCellEvent" prefWidth="124.5" text="First Name" />
+                <TableColumn fx:id="lastNameColumn" onEditCommit="#changeLastNameCellEvent" prefWidth="124.5" text="Last Name" />
+                  <TableColumn fx:id="birthdayColumn" prefWidth="106.5" text="Birthday" />
               </columns>
             </TableView>
             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
@@ -39,7 +38,6 @@
                <children>
                   <Button mnemonicParsing="false" onAction="#newPersonButtonPushed" prefWidth="130.0" text="Add New Person" />
                   <Button mnemonicParsing="false" onAction="#deleteButtonPushed" prefWidth="130.0" text="Delete Person(s)" />
-                  <Button fx:id="detailedPersonViewButton" mnemonicParsing="false" onAction="#changeSceneToDetailedPersonView" prefWidth="130.0" text="Detailed Person View" />
                </children>
             </HBox>
          </children>
