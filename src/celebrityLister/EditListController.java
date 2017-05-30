@@ -1,29 +1,28 @@
 package celebrityLister;
 
+import java.io.IOException;
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.SelectionMode;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 /**
  * FXML Controller class
@@ -31,7 +30,12 @@ import javax.ws.rs.core.Response;
  * @author _o0
  */
 public class EditListController implements Initializable {
+     //for communication with backend
+    Client client = ClientBuilder.newClient();
 
+    //warning sign
+    @FXML
+    private Label error;
     //configure table
     @FXML
     private TableView<Person> tableView;
@@ -40,57 +44,63 @@ public class EditListController implements Initializable {
     @FXML
     private TableColumn<Person, String> lastNameColumn;
     @FXML
-    private TableColumn<Person, LocalDate> birthdayColumn;
+    private TableColumn<Person, String> birthdayColumn;
     //for new Person objects
     @FXML
     private TextField firstNameTextField;
     @FXML
     private TextField lastNameTextField;
-    @FXML
-    private DatePicker birthdayDatePicker;
+     @FXML
+    private TextField birthdayTextField;
     //for searchbar
     @FXML
     private TextField searchBar;
-    //for communication with backend
-    Client client = ClientBuilder.newClient();
+  
     //for repopulating tableView after operations
     List<Person> tempPersonList = new ArrayList<>();
 
     private ObservableList<Person> persons = FXCollections.observableArrayList();
+    @FXML
+    private Button btn_delete;
+    private TextField lastNameTextField1;
+    private TextField lastNameTextField2;
+    @FXML
+    private TextField textField_name;
+   
+   
 
     //PUT------------------------------------------------------------------------------------PUT
-    public void changeFirstNameCellEvent(TableColumn.CellEditEvent<Person, String> t) {
-//        Person personSelected = tableView.getSelectionModel().getSelectedItem();
-        ((Person) t.getTableView().getItems().get(t.getTablePosition().getRow())).setFirstName(t.getNewValue());
-        int id = t.getRowValue().getId().get();
-        String newEditedFirstName = t.getNewValue();
-        String nonEditetLastName = t.getRowValue().getLastName();
+//    public void changeFirstNameCellEvent(TableColumn.CellEditEvent<Person, String> t) {
+//////        Person personSelected = tableView.getSelectionModel().getSelectedItem();
+////        ((Person) t.getTableView().getItems().get(t.getTablePosition().getRow())).setFirstName(t.getNewValue());
+////        int id = t.getRowValue().idPrpoerty().get();
+////        String newEditedFirstName = t.getNewValue();
+////        String nonEditetLastName = t.getRowValue().getLastName();
+////
+////        changePerson(id,newEditedFirstName,nonEditetLastName);
+//    }
+//
+//    //doubleclick table view and change Person object
+//    public void changeLastNameCellEvent(TableColumn.CellEditEvent<Person, String> t) {
+//////        Person personSelected = tableView.getSelectionModel().getSelectedItem();
+////        ((Person) t.getTableView().getItems().get(t.getTablePosition().getRow())).setLastName(t.getNewValue());
+////        int id = t.getRowValue().idPrpoerty().get();
+////        String newEditedLastName = t.getNewValue();
+////        String nonEditetLastName = t.getRowValue().getLastName();
+//    }
 
-        changePerson(id,newEditedFirstName,nonEditetLastName);
-    }
-
-    //doubleclick table view and change Person object
-    public void changeLastNameCellEvent(TableColumn.CellEditEvent<Person, String> t) {
-//        Person personSelected = tableView.getSelectionModel().getSelectedItem();
-        ((Person) t.getTableView().getItems().get(t.getTablePosition().getRow())).setLastName(t.getNewValue());
-        int id = t.getRowValue().getId().get();
-        String newEditedLastName = t.getNewValue();
-        String nonEditetLastName = t.getRowValue().getLastName();
-    }
-    
 //    public void changeBirthdayCellEvent(CellEditEvent edittedCell){
 //        Person personSelected = tableView.getSelectionModel().getSelectedItem();
 //        personSelected.setBirthday((Date) edittedCell.getNewValue());
 //    }
-
     //send first and last name to backend
     public void changePerson(int id, String firstName, String lastname) {
-    PersonNoProperty updatePerson = new PersonNoProperty();
-    updatePerson.setFirstName(firstName);
-    updatePerson.setLastName(lastname);
-    client.target("http://localhost:8080/CelebrityListerBackend/webapi/persons").path("/" + id)
-                .request()
-                .put(Entity.entity(updatePerson, MediaType.APPLICATION_JSON));
+//        PersonNoProperty updatePerson = new PersonNoProperty();
+//        updatePerson.setFirstName(firstName);
+//        updatePerson.setLastName(lastname);
+//        client.target("http://localhost:8080/CelebrityListerBackend/webapi/persons").path("/" + id)
+//                .request()
+//                .put(Entity.entity(updatePerson, MediaType.APPLICATION_JSON));
     }
 
     /**
@@ -101,126 +111,117 @@ public class EditListController implements Initializable {
         //columns for the table
         firstNameColumn.setCellValueFactory(new PropertyValueFactory<Person, String>("firstName"));
         lastNameColumn.setCellValueFactory(new PropertyValueFactory<Person, String>("lastName"));
-        birthdayColumn.setCellValueFactory(new PropertyValueFactory<Person, LocalDate>("birthday"));
-
+        birthdayColumn.setCellValueFactory(new PropertyValueFactory<Person, String>("birthday"));
+       
         //load the data
-        tableView.setItems(persons);
-        persons.clear();
+        tableView.itemsProperty().setValue(persons);
+//        tableView.setItems(persons);
+       
+         persons.clear();
         persons.addAll(getPersons());
-
-        //Allow cell edit of First and Last name
         tableView.setEditable(true);
-        firstNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        lastNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-
-        //selecting multiple rows
-        tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-
-        searchBar.textProperty().addListener(new ChangeListener() {
-            @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                persons.clear();
-                tempPersonList.stream()
-                        .filter(t-> t.getFirstName().toUpperCase().contains(searchBar.getText().toUpperCase())|| t.getLastName().toUpperCase().contains(searchBar.getText().toUpperCase()))
-                        .forEach(k-> persons.addAll(k));
-
-//                if (searchBar.equals(null)) {
-//                    System.out.println("sdvalkjhfasd");
-//                } else {
-//
-//                    ObservableList<Person> searchList = FXCollections.observableArrayList();
-//
-//                    for (int i = 0; i < getPersons().size(); i++) {
-//                        if (getPersons().get(i).getFirstName().toLowerCase().contains(searchBar.getText().toLowerCase())) {
-//                            searchList.add(getPersons().get(i));
-//
-//                            //columns for the table
-//                            firstNameColumn.setCellValueFactory(new PropertyValueFactory<Person, String>("firstName"));
-//                            lastNameColumn.setCellValueFactory(new PropertyValueFactory<Person, String>("lastName"));
-//                            birthdayColumn.setCellValueFactory(new PropertyValueFactory<Person, LocalDate>("birthday"));
-//
-//                        }
-//                    }
-//                    //clear temporary list
-//                    tableView.setItems(null);
-//
-//                    //load the data
-//
-//                    tableView.setItems(searchList);
-//
-//
-//                }
-
+//         searchPerson();
+        updateColum();
+    }
+public void searchPerson(){
+    FilteredList<Person> filterdPersons = new FilteredList<> (persons, pers->true);
+    searchBar.textProperty().addListener(( observable , t1, t2)-> {
+       filterdPersons.setPredicate( p -> {
+            if(t2 == null || t2.isEmpty()){
+                return true;
             }
-        });
+            String lowCase = t2.toLowerCase();
+            return p.getFirsttName().toLowerCase().contains(lowCase);
+         
+     });    
+    });
+    SortedList<Person> sortedPerson = new SortedList<>(filterdPersons);
+    sortedPerson.comparatorProperty().bind(tableView.comparatorProperty());
+    tableView.setItems(sortedPerson);
+    
+}
+    public void updateColum() {
+        
 
     }
 
     //DELETE------------------------------------------------------------------------DELETE
-    public void deleteButtonPushed() {
-        Person person = tableView.getSelectionModel().getSelectedItem();
-
-        Response r = client.target("http://localhost:8080/CelebrityListerBackend/webapi/persons/")
-                .path(person.getId().getValue() + "")
+    @FXML
+    public void deleteButtonPushed(ActionEvent event) {
+         Person person = (Person) tableView.getSelectionModel().getSelectedItem();
+        int indexSelect = tableView.getSelectionModel().getSelectedIndex();
+        client = ClientBuilder.newClient();
+        client.target("http://localhost:8080/CelebrityListerBackend/webapi/persons")
+                .path(Integer.toString(person.getId()))
                 .request(MediaType.APPLICATION_JSON)
                 .delete();
-        for (int i = 0; i < tempPersonList.size(); i++) {
-            if(person.getId()==tempPersonList.get(i).getId()){
-                tempPersonList.remove(i);
-            }
-        }
-        
-        persons.clear();
-        persons.addAll(tempPersonList);
+
+        getPersons();
+
     }
 
     //POST-------------------------------------------------------------------------POST
-    public void newPersonButtonPushed() {
-
-        PersonNoProperty newPerson = new PersonNoProperty();
-        newPerson.setFirstName(firstNameTextField.getText());
-        newPerson.setLastName(lastNameTextField.getText());
-        newPerson.setBirthday(java.sql.Date.valueOf(birthdayDatePicker.getValue()));
+    @FXML
+    public void newPersonButtonPushed(ActionEvent event) throws IOException {
+        System.out.println("test add");
+        Person p = new Person();
+        p.setFirstName(firstNameTextField.getText());
+        p.setLastName(lastNameTextField.getText());
+        p.setBirhthday(birthdayTextField.getText());
+//    
+        
+        System.out.println("test add2");
+        
+        client = ClientBuilder.newClient();
         client.target("http://localhost:8080/CelebrityListerBackend/webapi/persons/")
                 .request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(newPerson), Person.class);
-        
-        
-                 
-       
-        Person temp = new Person( firstNameTextField.getText(), lastNameTextField.getText(), java.sql.Date.valueOf(birthdayDatePicker.getValue()));
-       
-        
-        persons.addAll(temp);
-
-        //get all items from the table as list, add new Person to that list
-        //tableView.getItems().add(newPerson);
-        
+                .post(Entity.json(p), Person.class);
     }
 
     //GET-----------------------------------------------------------------------------GET
-    public List<Person> getPersons(){
-        List<PersonNoProperty> ListNoProperties = new ArrayList<>();
-        
-        
-        
-        ListNoProperties = client.target("http://localhost:8080/CelebrityListerBackend/webapi/persons")
-                .request(MediaType.APPLICATION_JSON)
-                .get(new GenericType<List<PersonNoProperty>>() {
-                    
-                });
-        
-        ListNoProperties.stream().forEach((row)->{
-        Person temp = new Person(row.getId(), row.getFirstName(), row.getLastName(), row.getBirthday());
-        tempPersonList.add(temp);
+    public List<Person> getPersons() {
+
+        tableView.getItems().clear();
+        client = ClientBuilder.newClient();
+
+        List<PersonNoProperty> listOfPersonNoProperty
+                = client.target("http://localhost:8080/CelebrityListerBackend/webapi/persons")
+                        .request(MediaType.APPLICATION_JSON)
+                        .get(new GenericType<List<PersonNoProperty>>() {
+                        });
+
+        List<Person> tempListOfPerson = new ArrayList();
+
+        listOfPersonNoProperty.stream().forEach((p)
+                -> {
+            tempListOfPerson.add(new Person(p.getId(), p.getFirstName(), p.getLastName(), p.getBirthday()));
         });
-        
+
+        tempListOfPerson.stream().forEach((pers) -> {
+            persons.add(pers);
+            tableView.setItems(persons);
+
+        });
         return tempPersonList;
 
     }
+
     //for repopulating tableView after operations
-    public List<Person> getTempPersonList(){
+    public List<Person> getTempPersonList() {
         return tempPersonList;
     }
 
+    @FXML
+    private void changeFirstNameCellEvent(TableColumn.CellEditEvent<Person, String> event) {
+    }
+
+    @FXML
+    private void changeLastNameCellEvent(TableColumn.CellEditEvent<Person, String> event) {
+    }
+
+    @FXML
+    private void changeBirthdayCellEvent(TableColumn.CellEditEvent<Person, String> event) {
+    }
+
+   
 }
